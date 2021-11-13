@@ -58,3 +58,20 @@ class Clique:
                     dense_unit = dict({f: unit})
                     one_dim_dense_units.append(dense_unit)
         return one_dim_dense_units
+
+    def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
+        candidates = self.join(previous_dense_units, dimension)
+        if self.pruning:
+            self.prune(candidates,previous_dense_units)
+
+    def join(self, previous_dense_units, dimension):
+        candidates = set()
+        for dense_unit in previous_dense_units:
+            for dense_unit2 in previous_dense_units:
+                joined_dense_unit = dense_unit.update(dense_unit2)
+                if len(joined_dense_unit.keys()) == dimension:
+                    candidates.add(joined_dense_unit)
+        return list(candidates)
+
+    def prune(self, candidates, previous_dense_units):
+        pass
