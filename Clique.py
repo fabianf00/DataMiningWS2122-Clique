@@ -28,7 +28,7 @@ class Clique:
         self.data = data.copy()
         for feature in range(self.numbers_of_features):
             self.data[:, feature] -= min(self.data[:, feature])
-            max_value = max(self.data[:, feature]) + 1e-6 # added 1e-6 because clustering only considers [0,max_value)
+            max_value = max(self.data[:, feature]) + 1e-6  # added 1e-6 because clustering only considers [0,max_value)
             self.intervals.append((max_value / self.xi))
 
     # runes clique algorithm
@@ -36,7 +36,7 @@ class Clique:
         dense_units = self.generate_one_Dimensional_Units()
         dimension = 2
         print(dense_units)
-        while dimension < 3 and len(dense_units) > 0:
+        while dimension <= self.numbers_of_features and len(dense_units) > 0:
             dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
             dimension += 1
 
@@ -64,8 +64,10 @@ class Clique:
 
     def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
         candidates = self.join_dense_units(previous_dense_units, dimension)
+        print("Number of Candidates before Prunning: ", len(candidates))
         if self.pruning:
             self.prune(candidates, previous_dense_units)
+            print("Number of Candidates after Prunning: ", len(candidates))
         return candidates
 
     def join_dense_units(self, previous_dense_units, dimension):
@@ -79,4 +81,14 @@ class Clique:
         return candidates
 
     def prune(self, candidates, previous_dense_units):
-        pass
+        for candidate in candidates:
+            if not self.subdimensions_included(candidate, previous_dense_units):
+                candidates.remove(candidate)
+
+    def subdimensions_included(self, candidate, previous_dense_units):
+        for feature in candidate.keys():
+            subspace_candidate = candidate.copy()
+            subspace_candidate.pop(feature)
+            if subspace_candidate not in previous_dense_units:
+                return False
+        return True
