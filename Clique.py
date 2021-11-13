@@ -74,7 +74,7 @@ class Clique:
             for i in range(len(candidates)):
                 if self.is_in_unit(datapoint, candidates[i]):
                     subdim_projection[i] += 1
-            
+
         for i in range(len(subdim_projection)):
             if subdim_projection[i] >= self.tau * self.numbers_of_data_points:
                 dense_units.append(candidates[i])
