@@ -28,10 +28,8 @@ class Clique:
         self.data = data.copy()
         for feature in range(self.numbers_of_features):
             self.data[:, feature] -= min(self.data[:, feature])
-            maxValue = max(self.data[:, feature])
-            self.intervals.append((maxValue / self.xi))
-        print(self.data)
-        print(self.intervals)
+            max_value = max(self.data[:, feature])
+            self.intervals.append((max_value / self.xi))
 
     # runes clique algorithm
     def process(self):
@@ -62,4 +60,4 @@ if __name__ == '__main__':
     data = np.array([[1, 2, 3, 4],
                      [5, 7, 0, 1],
                      [0, 0, 0.5, 10]])
-    clique = Clique(1,0.1,True,data)
+    clique = Clique(1, 0.1, True, data)
