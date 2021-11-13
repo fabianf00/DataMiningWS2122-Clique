@@ -9,20 +9,20 @@ class Clique:
     tau: int = 0.2
 
     # pruning value
-    isPruning: bool = False
+    pruning: bool = False
 
     # data is the preprocessed dataset input
     data = []
 
-    numbers_of_features: int = 2
-    numbers_of_data_points: int = 2
+    numbers_of_features: int = 0
+    numbers_of_data_points: int = 0
 
     intervals: list = []
 
     def __init__(self, xi, tau, pruning, data):
         self.xi = xi
         self.tau = tau
-        self.isPruning = pruning
+        self.pruning = pruning
         self.numbers_of_features = np.shape(data)[1]
         self.numbers_of_data_points = np.shape(data)[0]
         self.data = data.copy()
@@ -34,22 +34,26 @@ class Clique:
     # runes clique algorithm
     def process(self):
         dense_units = self.generate_one_Dimensional_Units()
+        dimension = 2
+        while dimension < self.numbers_of_features and len(dense_units) > 0:
+            dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
+        return dense_units
 
     def get_unit_ID(self, feature, element):
-        return (element - self.minValue[feature]) // self.intervals[feature]
+        return int(element // self.intervals[feature])
 
     def generate_one_Dimensional_Units(self):
-        subspaces = np.zeros(self.xsi, self.number_features)
+        subspaces = np.zeros((self.xi, self.numbers_of_features))
 
-        for feature in range(self.number_features):
+        for feature in range(self.numbers_of_features):
             for element in self.data[:, feature]:
                 index = self.get_unit_ID(feature, element)
                 subspaces[index, feature] += 1
 
         one_dim_dense_units = []
 
-        for f in range(self.number_features):
-            for unit in range(self.xsi):
+        for f in range(self.numbers_of_features):
+            for unit in range(self.xi):
                 if subspaces[unit, f] > self.tau * self.numbers_of_data_points:
                     dense_unit = dict({f: unit})
                     one_dim_dense_units.append(dense_unit)
