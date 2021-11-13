@@ -35,8 +35,11 @@ class Clique:
     def process(self):
         dense_units = self.generate_one_Dimensional_Units()
         dimension = 2
-        while dimension < self.numbers_of_features and len(dense_units) > 0:
+        print(dense_units)
+        while dimension < 3 and len(dense_units) > 0:
             dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
+            dimension += 1
+
         return dense_units
 
     def get_unit_ID(self, feature, element):
@@ -60,18 +63,20 @@ class Clique:
         return one_dim_dense_units
 
     def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
-        candidates = self.join(previous_dense_units, dimension)
+        candidates = self.join_dense_units(previous_dense_units, dimension)
         if self.pruning:
-            self.prune(candidates,previous_dense_units)
+            self.prune(candidates, previous_dense_units)
+        return candidates
 
-    def join(self, previous_dense_units, dimension):
-        candidates = set()
+    def join_dense_units(self, previous_dense_units, dimension):
+        candidates = []
         for dense_unit in previous_dense_units:
             for dense_unit2 in previous_dense_units:
-                joined_dense_unit = dense_unit.update(dense_unit2)
-                if len(joined_dense_unit.keys()) == dimension:
-                    candidates.add(joined_dense_unit)
-        return list(candidates)
+                joined_dense_unit = dense_unit.copy()
+                joined_dense_unit.update(dense_unit2)
+                if len(joined_dense_unit.keys()) == dimension and joined_dense_unit not in candidates:
+                    candidates.append(joined_dense_unit)
+        return candidates
 
     def prune(self, candidates, previous_dense_units):
         pass
