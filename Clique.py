@@ -72,16 +72,16 @@ class Clique:
 
     def join_dense_units(self, previous_dense_units, dimension):
         candidates = []
-        for dense_unit in previous_dense_units:
-            for dense_unit2 in previous_dense_units:
-                joined_dense_unit = dense_unit.copy()
-                joined_dense_unit.update(dense_unit2)
+        for i in range(len(previous_dense_units)):
+            for j in range(i, len(previous_dense_units)):
+                joined_dense_unit = previous_dense_units[i].copy()
+                joined_dense_unit.update(previous_dense_units[j])
                 if len(joined_dense_unit.keys()) == dimension and joined_dense_unit not in candidates:
                     candidates.append(joined_dense_unit)
         return candidates
 
     def prune(self, candidates, previous_dense_units):
-        for candidate in candidates:
+        for candidate in candidates.copy():
             if not self.subdimensions_included(candidate, previous_dense_units):
                 candidates.remove(candidate)
 
