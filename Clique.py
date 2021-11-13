@@ -35,7 +35,6 @@ class Clique:
     def process(self):
         dense_units = self.generate_one_Dimensional_Units()
         dimension = 2
-        print(dense_units)
         while dimension <= self.numbers_of_features and len(dense_units) > 0:
             dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
             dimension += 1
@@ -57,18 +56,29 @@ class Clique:
 
         for f in range(self.numbers_of_features):
             for unit in range(self.xi):
-                if subspaces[unit, f] > self.tau * self.numbers_of_data_points:
+                if subspaces[unit, f] >= self.tau * self.numbers_of_data_points:
                     dense_unit = dict({f: unit})
                     one_dim_dense_units.append(dense_unit)
         return one_dim_dense_units
 
     def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
         candidates = self.join_dense_units(previous_dense_units, dimension)
-        print("Number of Candidates before Prunning: ", len(candidates))
+        dense_units = []
+        #print("Number of Candidates before Prunning: ", len(candidates))
         if self.pruning:
             self.prune(candidates, previous_dense_units)
-            print("Number of Candidates after Prunning: ", len(candidates))
-        return candidates
+            #print("Number of Candidates after Prunning: ", len(candidates))
+
+        subdim_projection = np.zeros(len(candidates))
+        for datapoint in self.data:
+            for i in range(len(candidates)):
+                if self.is_in_unit(datapoint, candidates[i]):
+                    subdim_projection[i] += 1
+            
+        for i in range(len(subdim_projection)):
+            if subdim_projection[i] >= self.tau * self.numbers_of_data_points:
+                dense_units.append(candidates[i])
+        return dense_units
 
     def join_dense_units(self, previous_dense_units, dimension):
         candidates = []
@@ -90,5 +100,11 @@ class Clique:
             subspace_candidate = candidate.copy()
             subspace_candidate.pop(feature)
             if subspace_candidate not in previous_dense_units:
+                return False
+        return True
+
+    def is_in_unit(self, datapoint, unit):
+        for feature_id, unit_id in unit.items():
+            if unit_id != self.get_unit_ID(feature_id, datapoint[feature_id]):
                 return False
         return True
