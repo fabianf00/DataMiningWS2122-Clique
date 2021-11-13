@@ -1,5 +1,5 @@
 import numpy as np
-import Clique
+from Clique import Clique
 
 if __name__ == '__main__':
     data = np.array([[1, 2, 3, 4],
