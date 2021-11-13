@@ -28,7 +28,7 @@ class Clique:
         self.data = data.copy()
         for feature in range(self.numbers_of_features):
             self.data[:, feature] -= min(self.data[:, feature])
-            max_value = max(self.data[:, feature])
+            max_value = max(self.data[:, feature]) + 1e-6 # added 1e-6 because clustering only considers [0,max_value)
             self.intervals.append((max_value / self.xi))
 
     # runes clique algorithm
