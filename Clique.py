@@ -190,3 +190,19 @@ class Clique:
                         break
             clusterlist_with_pointids.append(pointids_in_cluster)
         return clusterlist_with_pointids
+
+    def get_all_labels(self):
+        labels = dict()
+        for key in self.clusters_subspaces.keys():
+            labels.update({key: self.get_labels_for_subspace(key)})
+        return labels
+
+    def get_labels_for_subspace(self, subspace):
+        subspace_key = frozenset(subspace)
+        labels = np.full(self.numbers_of_data_points, -1)
+        clusterlist = self.clusters_subspaces[subspace_key]
+
+        for cluster_index, cluster_points in enumerate(clusterlist):
+            labels[cluster_points] = cluster_index;
+
+        return labels
