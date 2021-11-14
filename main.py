@@ -9,5 +9,5 @@ if __name__ == '__main__':
                      [0.33, 5.43, -1]
                      ])
     clique = Clique(10, 0.1, data)
-    dense_units = clique.process()
-    print(dense_units)
+    clusters = clique.process()
+    print(clusters)
