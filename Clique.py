@@ -9,7 +9,7 @@ class Clique:
     tau: int = 0.2
 
     # pruning value
-    pruning: bool = False
+    pruning: bool = True
 
     # data is the preprocessed dataset input
     data = []
@@ -19,7 +19,7 @@ class Clique:
 
     intervals: list = []
 
-    def __init__(self, xi, tau, pruning, data):
+    def __init__(self, xi, tau, data, pruning = True):
         self.xi = xi
         self.tau = tau
         self.pruning = pruning
@@ -27,7 +27,7 @@ class Clique:
         self.numbers_of_data_points = np.shape(data)[0]
         self.data = data.copy()
         for feature in range(self.numbers_of_features):
-            self.data[:, feature] -= min(self.data[:, feature])
+            self.data[:, feature] -= min(self.data[:, feature]) # preprocess data: minimum value is adjusted to 0
             max_value = max(self.data[:, feature]) + 1e-6  # added 1e-6 because clustering only considers [0,max_value)
             self.intervals.append((max_value / self.xi))
 
@@ -92,10 +92,10 @@ class Clique:
 
     def prune(self, candidates, previous_dense_units):
         for candidate in candidates.copy():
-            if not self.subdimensions_included(candidate, previous_dense_units):
+            if not self.dense_unit_included_in_subspaces(candidate, previous_dense_units):
                 candidates.remove(candidate)
 
-    def subdimensions_included(self, candidate, previous_dense_units):
+    def dense_unit_included_in_subspaces(self, candidate, previous_dense_units):
         for feature in candidate.keys():
             subspace_candidate = candidate.copy()
             subspace_candidate.pop(feature)
