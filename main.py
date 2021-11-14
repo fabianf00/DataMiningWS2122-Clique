@@ -12,4 +12,4 @@ if __name__ == '__main__':
     clique = Clique(10, 0.1, data)
     clusters = clique.process()
     print(clusters)
-    print(clique.get_labels_for_subspace((1, 2)))
+    print(clique.get_all_labels())
