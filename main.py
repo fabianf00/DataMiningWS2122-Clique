@@ -8,6 +8,6 @@ if __name__ == '__main__':
                      [1.1, 5, 8],
                      [0.33, 5.43, -1]
                      ])
-    clique = Clique(2, 0.1, data)
+    clique = Clique(10, 0.1, data)
     clusters = clique.process()
     print(clusters)

@@ -130,7 +130,6 @@ class Clique:
             clusters_by_subspaces.update({subspace: clusters_in_subspace_with_points})
             clusters_by_subspaces_dense_unit.update({subspace: clusters_in_subspace_with_dense_units})
 
-        print(clusters_by_subspaces_dense_unit)
         return clusters_by_subspaces
 
     def generateClusters(self, dense_units):
@@ -186,9 +185,10 @@ class Clique:
         clusterlist_with_pointids = []
         for cluster in clusters_in_subspace_with_dense_units:
             pointids_in_cluster = []
-            for dense_unit in cluster:
-                for i in range(len(self.data)):
+            for i in range(len(self.data)):
+                for dense_unit in cluster:
                     if self.is_in_unit(self.data[i], dense_unit):
                         pointids_in_cluster.append(i)
+                        break
             clusterlist_with_pointids.append(pointids_in_cluster)
-            return clusterlist_with_pointids
+        return clusterlist_with_pointids
