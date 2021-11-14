@@ -10,6 +10,5 @@ if __name__ == '__main__':
                      [0.33, 5.43, -1]
                      ])
     clique = Clique(10, 0.1, data)
-    clusters = clique.process()
-    print(clusters)
+    clique.process()
     print(clique.get_all_labels())
