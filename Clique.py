@@ -18,7 +18,7 @@ class Clique:
     numbers_of_data_points: int = 0
 
     intervals: list = []
-    
+
     clusters_subspaces = dict()
 
     def __init__(self, xi, tau, data, pruning=True):
@@ -42,8 +42,6 @@ class Clique:
             dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
             self.clusters_subspaces.update(self.find_all_clusters(dense_units))
             dimension += 1
-
-        return self.clusters_subspaces
 
     def get_unit_ID(self, feature, element):
         return int(element // self.intervals[feature])
