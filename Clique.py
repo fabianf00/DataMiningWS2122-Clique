@@ -116,6 +116,7 @@ class Clique:
     def find_all_clusters(self, dense_units):
         set_of_subspaces = set()
         clusters_by_subspaces = dict()
+        clusters_by_subspaces_dense_unit = dict()
         for dense_unit in dense_units:
             set_of_subspaces.add(frozenset(dense_unit.keys()))
         for subspace in set_of_subspaces:
@@ -125,10 +126,11 @@ class Clique:
                     dense_units_in_subspace.append(dense_unit)
 
             clusters_in_subspace_with_dense_units = self.generateClusters(dense_units_in_subspace)
-            #clusters_in_subspace_with_points = get_clusters_with_point_ids(clusters_in_subspace_with_dense_units,
-                                                                           #self.data,
-                                                                           #self.xi, self.intervals)
-            clusters_by_subspaces.update({subspace: clusters_in_subspace_with_dense_units})
+            clusters_in_subspace_with_points = self.get_clusters_with_point_ids(clusters_in_subspace_with_dense_units)
+            clusters_by_subspaces.update({subspace: clusters_in_subspace_with_points})
+            clusters_by_subspaces_dense_unit.update({subspace: clusters_in_subspace_with_dense_units})
+
+        print(clusters_by_subspaces_dense_unit)
         return clusters_by_subspaces
 
     def generateClusters(self, dense_units):
@@ -179,3 +181,14 @@ class Clique:
                         connected_dense_units.append(dense_unit)
 
         return connected_dense_units
+
+    def get_clusters_with_point_ids(self, clusters_in_subspace_with_dense_units):
+        clusterlist_with_pointids = []
+        for cluster in clusters_in_subspace_with_dense_units:
+            pointids_in_cluster = []
+            for dense_unit in cluster:
+                for i in range(len(self.data)):
+                    if self.is_in_unit(self.data[i], dense_unit):
+                        pointids_in_cluster.append(i)
+            clusterlist_with_pointids.append(pointids_in_cluster)
+            return clusterlist_with_pointids
