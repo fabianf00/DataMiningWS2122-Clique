@@ -1,14 +1,21 @@
 import numpy as np
 from Clique import Clique
+import random
+import time
 
 if __name__ == '__main__':
-    data = np.array([[1, 2, 3],
-                     [5, 7, 0],
-                     [0, 0, 0.5],
-                     [0.1, 0.1, 0.4],
-                     [1.1, 5, 8],
-                     [0.33, 5.43, -1]
-                     ])
-    clique = Clique(10, 0.1, data)
+    list_of_data = []
+    for i in range(20000):
+        value = random.randint(-2, 9)
+        list_of_data.append(value)
+    data = np.array(list_of_data).reshape((1000, 20))
+    start = time.time()
+    clique = Clique(3, 0.1, data, False)
     clique.process()
-    print(clique.get_all_labels())
+    print("Finished processing")
+    print("Start Labeling")
+    labels_for_subspace = clique.get_all_labels()
+    print("Finished Labeling")
+
+    end = time.time()
+    print(end - start, "seconds for execution")
