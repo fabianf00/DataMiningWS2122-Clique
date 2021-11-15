@@ -17,7 +17,7 @@ class Clique:
     numbers_of_features: int = 0
     numbers_of_data_points: int = 0
 
-    intervals: list = []
+    intervals = dict()
 
     clusters_subspaces = dict()
 
@@ -28,7 +28,7 @@ class Clique:
         self.numbers_of_features = np.shape(data)[1]
         self.numbers_of_data_points = np.shape(data)[0]
         self.data = data.copy()
-        self.preprocess_data()
+        self.preprocess_data(data)
 
     # runes clique algorithm
     def process(self):
@@ -212,8 +212,9 @@ class Clique:
 
     # data is shifted by minimum value
     # the scanned space is increased by 1e-6 because only points in the interval [0,max_value) are considered
-    def preprocess_data(self):
+    def preprocess_data(self, data):
+
         for feature in range(self.numbers_of_features):
-            self.data[:, feature] -= min(self.data[:, feature])
+            self.data[:, feature] -= min(data[:, feature])
             max_value = max(self.data[:, feature]) + 1e-6
-            self.intervals.append((max_value / self.xi))
+            self.intervals.update({feature: (max_value / self.xi)})
