@@ -9,6 +9,18 @@ def get_data_from_file(file):
     return numpy_data
 
 
+def save_labels_for_subspaces(all_labels, output_file):
+    with open(output_file, 'w') as f:
+        for subspace, labels in all_labels.items():
+            f.write(str(list(subspace)))
+            f.write('\n')
+            f.write('[')
+            for label in labels:
+                f.write(str(label) + ", ")
+            f.write(']')
+            f.write('\n')
+
+
 if __name__ == '__main__':
     data = get_data_from_file("segmentation data.csv")
 
@@ -22,9 +34,5 @@ if __name__ == '__main__':
     print("Finished Labeling")
 
     end = time.time()
-    """
-    for subspace, labels in labels_for_subspace.items():
-        print("Subspaces:", list(subspace))
-        print(labels)
-    """
     print(end - start, "seconds for execution")
+    save_labels_for_subspaces(labels_for_subspace, "output.txt")
