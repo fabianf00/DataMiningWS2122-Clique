@@ -5,12 +5,13 @@ import time
 
 if __name__ == '__main__':
     list_of_data = []
-    for i in range(20000):
-        value = random.randint(-2, 9)
+    for i in range(240000):
+        value = random.randint(-2, random.randint(0, 25))
         list_of_data.append(value)
-    data = np.array(list_of_data).reshape((1000, 20))
+    data = np.array(list_of_data).reshape((60000, 4))
     start = time.time()
-    clique = Clique(3, 0.1, data, False)
+    print("Started processing")
+    clique = Clique(10, 0.01, data)
     clique.process()
     print("Finished processing")
     print("Start Labeling")
