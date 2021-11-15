@@ -9,7 +9,7 @@ def get_data_from_file(file):
     return numpy_data
 
 
-def save_labels_for_subspaces(all_labels, output_file):
+def save_labels_for_subspaces(all_labels, output_file,input_file,xi,tau):
     with open(output_file, 'w') as f:
         for subspace, labels in all_labels.items():
             f.write(str(list(subspace)))
