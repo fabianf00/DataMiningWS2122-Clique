@@ -2,7 +2,6 @@ import numpy as np
 
 
 class Clique:
-
     xi: int = 1
     tau: int = 0.2
     pruning: bool = True
@@ -12,7 +11,7 @@ class Clique:
     numbers_of_data_points: int = 0
 
     intervals = dict()
-    clusters_subspaces = dict()
+    clusters_of_all_subspaces = dict()
 
     def __init__(self, xi, tau, data, pruning=True):
         self.xi = xi
@@ -21,27 +20,46 @@ class Clique:
         self.numbers_of_features = np.shape(data)[1]
         self.numbers_of_data_points = np.shape(data)[0]
         self.data = data.copy()
-        self.preprocess_data(data)
+        self.__preprocess_data(data)
 
     # runes clique algorithm
     def process(self):
-        dense_units = self.generate_one_Dimensional_Units()
-        self.clusters_subspaces.update(self.find_all_clusters(dense_units))
+        dense_units = self.__find_one_dimensional_dense_units()
+        self.clusters_of_all_subspaces.update(self.__find_all_clusters(dense_units))
         dimension = 2
         while dimension <= self.numbers_of_features and len(dense_units) > 0:
-            dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
-            self.clusters_subspaces.update(self.find_all_clusters(dense_units))
+            dense_units = self.__find_n_dimensional_dense_units(dense_units, dimension)
+            self.clusters_of_all_subspaces.update(self.__find_all_clusters(dense_units))
             dimension += 1
 
-    def get_unit_ID(self, feature, element):
+    def __get_unit_ID(self, feature, element):
         return int(element // self.intervals[feature])
 
-    def generate_one_Dimensional_Units(self):
+    def __is_in_unit(self, datapoint, unit):
+        for feature_id, unit_id in unit.items():
+            if unit_id != self.__get_unit_ID(feature_id, datapoint[feature_id]):
+                return False
+        return True
+
+    # data is shifted by minimum value therefore no minimum value is needed to calculate the unit
+    # the scanned space is increased by 1e-6 because only points in the interval [0,max_value)
+    # the highest value of each feature would not be considered otherwise
+    def __preprocess_data(self, data):
+        for feature in range(self.numbers_of_features):
+            self.data[:, feature] -= min(data[:, feature])
+            max_value = max(self.data[:, feature]) + 1e-6
+            self.intervals.update({feature: (max_value / self.xi)})
+
+    def get_all_clusters(self):
+        return self.clusters_of_all_subspaces
+
+    # Section FINDING DENSE UNITS
+    def __find_one_dimensional_dense_units(self):
         subspaces = np.zeros((self.xi, self.numbers_of_features))
 
         for feature in range(self.numbers_of_features):
             for element in self.data[:, feature]:
-                index = self.get_unit_ID(feature, element)
+                index = self.__get_unit_ID(feature, element)
                 subspaces[index, feature] += 1
 
         one_dim_dense_units = []
@@ -53,16 +71,17 @@ class Clique:
                     one_dim_dense_units.append(dense_unit)
         return one_dim_dense_units
 
-    def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
-        candidates = self.join_dense_units(previous_dense_units, dimension)
+    def __find_n_dimensional_dense_units(self, previous_dense_units, dimension):
+        candidates = self.__join_dense_units(previous_dense_units, dimension)
         dense_units = []
+
         if self.pruning and dimension > 2:
-            self.prune(candidates, previous_dense_units)
+            self.__prune(candidates, previous_dense_units)
 
         subspaces = np.zeros(len(candidates))
         for datapoint in self.data:
             for i in range(len(candidates)):
-                if self.is_in_unit(datapoint, candidates[i]):
+                if self.__is_in_unit(datapoint, candidates[i]):
                     subspaces[i] += 1
 
         for i in range(len(subspaces)):
@@ -70,8 +89,9 @@ class Clique:
                 dense_units.append(candidates[i])
         return dense_units
 
-    def join_dense_units(self, previous_dense_units, dimension):
+    def __join_dense_units(self, previous_dense_units, dimension):
         candidates = []
+
         for i in range(len(previous_dense_units)):
             for j in range(i, len(previous_dense_units)):
                 joined_dense_unit = previous_dense_units[i].copy()
@@ -80,12 +100,12 @@ class Clique:
                     candidates.append(joined_dense_unit)
         return candidates
 
-    def prune(self, candidates, previous_dense_units):
+    def __prune(self, candidates, previous_dense_units):
         for candidate in candidates.copy():
-            if not self.dense_unit_included_in_all_lower_subspaces(candidate, previous_dense_units):
+            if not self.__dense_unit_included_in_all_lower_subspaces(candidate, previous_dense_units):
                 candidates.remove(candidate)
 
-    def dense_unit_included_in_all_lower_subspaces(self, candidate, previous_dense_units):
+    def __dense_unit_included_in_all_lower_subspaces(self, candidate, previous_dense_units):
         for feature in candidate.keys():
             subspace_candidate = candidate.copy()
             subspace_candidate.pop(feature)
@@ -93,16 +113,11 @@ class Clique:
                 return False
         return True
 
-    def is_in_unit(self, datapoint, unit):
-        for feature_id, unit_id in unit.items():
-            if unit_id != self.get_unit_ID(feature_id, datapoint[feature_id]):
-                return False
-        return True
-
-    def find_all_clusters(self, dense_units):
+    # Section FINDING CLUSTERS
+    def __find_all_clusters(self, dense_units):
         set_of_subspaces = set()
         clusters_by_subspaces = dict()
-        clusters_by_subspaces_dense_unit = dict()
+
         for dense_unit in dense_units:
             set_of_subspaces.add(frozenset(dense_unit.keys()))
         for subspace in set_of_subspaces:
@@ -111,28 +126,27 @@ class Clique:
                 if dense_unit.keys() == subspace:
                     dense_units_in_subspace.append(dense_unit)
 
-            clusters_in_subspace_with_dense_units = self.generate_clusters(dense_units_in_subspace)
-            clusters_in_subspace_with_points = self.get_clusters_with_point_ids(clusters_in_subspace_with_dense_units)
-            clusters_by_subspaces.update({subspace: clusters_in_subspace_with_points})
-            clusters_by_subspaces_dense_unit.update({subspace: clusters_in_subspace_with_dense_units})
+            dense_units_clusters_in_subspace = self.__find_clusters_in_subspace(dense_units_in_subspace)
+            points_clusters_in_subspace = self.__get_clusters_with_point_ids(dense_units_clusters_in_subspace)
+            clusters_by_subspaces.update({subspace: points_clusters_in_subspace})
 
         return clusters_by_subspaces
 
-    def generate_clusters(self, dense_units):
-        graph_matrix = self.generate_graph_adjacency_matrix(dense_units)
-        cluster_list = self.get_dense_unit_clusters(dense_units, graph_matrix)
+    def __find_clusters_in_subspace(self, dense_units):
+        graph_matrix = self.__generate_graph_adjacency_matrix(dense_units)
+        cluster_list = self.__get_dense_unit_clusters(dense_units, graph_matrix)
         return cluster_list
 
-    def generate_graph_adjacency_matrix(self, dense_units):
+    def __generate_graph_adjacency_matrix(self, dense_units):
         graph_matrix = np.zeros((len(dense_units), len(dense_units)))
         for i in range(len(dense_units)):
             for j in range(i, len(dense_units)):
-                connected = self.is_adjacent(dense_units[i], dense_units[j])
+                connected = self.__is_adjacent(dense_units[i], dense_units[j])
                 graph_matrix[i, j] = connected
                 graph_matrix[j, i] = connected
         return graph_matrix
 
-    def is_adjacent(self, unit1, unit2):
+    def __is_adjacent(self, unit1, unit2):
         if unit1 == unit2:
             return 0
         distance = 0
@@ -142,17 +156,17 @@ class Clique:
                 return 0
         return 1
 
-    def get_dense_unit_clusters(self, dense_units, graph_matrix):
+    def __get_dense_unit_clusters(self, dense_units, graph_matrix):
         cluster_list = []
         unvisited = dense_units.copy()
         while len(unvisited) != 0:
-            cluster = self.bfs(unvisited[0], dense_units, graph_matrix)
+            cluster = self.__bfs(unvisited[0], dense_units, graph_matrix)
             for dense_unit in cluster:
                 unvisited.remove(dense_unit)
             cluster_list.append(cluster)
         return cluster_list
 
-    def bfs(self, starting_unit, dense_units, graph_matrix):
+    def __bfs(self, starting_unit, dense_units, graph_matrix):
         connected_dense_units = [starting_unit]
         for i in range(len(dense_units)):
             if i >= len(connected_dense_units):
@@ -166,21 +180,22 @@ class Clique:
 
         return connected_dense_units
 
-    def get_clusters_with_point_ids(self, clusters_in_subspace_with_dense_units):
+    def __get_clusters_with_point_ids(self, clusters_in_subspace_with_dense_units):
         cluster_list_with_point_ids = []
         for cluster in clusters_in_subspace_with_dense_units:
             point_ids_in_cluster = []
             for i in range(len(self.data)):
                 for dense_unit in cluster:
-                    if self.is_in_unit(self.data[i], dense_unit):
+                    if self.__is_in_unit(self.data[i], dense_unit):
                         point_ids_in_cluster.append(i)
                         break
             cluster_list_with_point_ids.append(point_ids_in_cluster)
         return cluster_list_with_point_ids
 
+    # Section LABELING
     def get_all_labels(self):
         labels = dict()
-        for key in self.clusters_subspaces.keys():
+        for key in self.clusters_of_all_subspaces.keys():
             labels.update({key: self.get_labels_for_subspace(key)})
         return labels
 
@@ -188,17 +203,9 @@ class Clique:
     def get_labels_for_subspace(self, subspace):
         subspace_key = frozenset(subspace)
         labels = np.full(self.numbers_of_data_points, -1)  # label of -1 is a noise point
-        cluster_list = self.clusters_subspaces[subspace_key]
+        cluster_list = self.clusters_of_all_subspaces[subspace_key]
 
         for cluster_index, cluster_points in enumerate(cluster_list):
             labels[cluster_points] = cluster_index
 
         return labels
-
-    # data is shifted by minimum value
-    # the scanned space is increased by 1e-6 because only points in the interval [0,max_value) are considered
-    def preprocess_data(self, data):
-        for feature in range(self.numbers_of_features):
-            self.data[:, feature] -= min(data[:, feature])
-            max_value = max(self.data[:, feature]) + 1e-6
-            self.intervals.update({feature: (max_value / self.xi)})

@@ -30,12 +30,12 @@ def save_labels_for_subspaces(all_labels, output_file, input_file, xi, tau):
 
 def main(input_file, output_file, xi, tau):
     data = get_data_from_file(input_file)
-
     start = time.time()
 
     clique = Clique(xi, tau, data)
     clique.process()
     labels_for_subspace = clique.get_all_labels()
+    clique.get_all_clusters()
 
     end = time.time()
     print(end - start, "seconds for execution")
@@ -44,7 +44,6 @@ def main(input_file, output_file, xi, tau):
 
 
 if __name__ == '__main__':
-    main("Clustering.csv", "Output_clustering_file.txt", 3, 0.1)
+    main("Clustering.csv", "output_clustering_file.txt", 3, 0.1)
     main("wine-clustering.csv", "output_wine.txt", 3, 0.1)
-    main("segmentation data.csv", "Output_seg.txt", 4, 0.05)
-
+    main("segmentation data.csv", "output_seg.txt", 3, 0.1)
