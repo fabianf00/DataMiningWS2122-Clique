@@ -11,16 +11,21 @@ def get_data_from_file(file):
 
 def save_labels_for_subspaces(all_labels, output_file, input_file, xi, tau):
     with open(output_file, 'w') as f:
-        f.write("Data from:" + input_file + '\n')
-        f.write("xi: " + str(xi) + "\n" + "tau: " + str(tau) + "\n\n")
+        f.write("Data from: " + input_file + '\n')
+        f.write("xi: " + str(xi) + "\n" + "tau: " + str(tau) + "\n\n\n")
         for subspace, labels in all_labels.items():
-            f.write(str(list(subspace)))
+            f.write("subspace: " + str(list(subspace)))
             f.write('\n')
             f.write('[')
+            first = True
             for label in labels:
-                f.write(str(label) + ", ")
+                if first:
+                    first = False
+                    f.write(str(label))
+                else:
+                    f.write("," + str(label))
             f.write(']')
-            f.write('\n')
+            f.write('\n\n')
 
 
 def main(input_file, output_file, xi, tau):
