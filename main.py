@@ -32,13 +32,11 @@ def main(input_file, output_file, xi, tau):
     data = get_data_from_file(input_file)
 
     start = time.time()
-    print("Started processing")
+
     clique = Clique(xi, tau, data)
     clique.process()
-    print("Finished processing")
-    print("Start Labeling")
     labels_for_subspace = clique.get_all_labels()
-    print("Finished Labeling")
+
     end = time.time()
     print(end - start, "seconds for execution")
 

@@ -32,17 +32,11 @@ class Clique:
 
     # runes clique algorithm
     def process(self):
-        print("Calculating one dimensional dense units")
         dense_units = self.generate_one_Dimensional_Units()
-        print(len(dense_units), "dense units found in one dimensional subspaces")
-        print("Calculation one dimensional clusters")
         self.clusters_subspaces.update(self.find_all_clusters(dense_units))
         dimension = 2
         while dimension <= self.numbers_of_features and len(dense_units) > 0:
-            print("Calculating", dimension, "dimensional dense units")
             dense_units = self.generate_n_dimensional_dense_units(dense_units, dimension)
-            print(len(dense_units), "dense units found in", dimension, "dimensional subspaces")
-            print("Calculating", dimension, "dimensional clusters")
             self.clusters_subspaces.update(self.find_all_clusters(dense_units))
             dimension += 1
 
@@ -69,10 +63,8 @@ class Clique:
     def generate_n_dimensional_dense_units(self, previous_dense_units, dimension):
         candidates = self.join_dense_units(previous_dense_units, dimension)
         dense_units = []
-        print("Number of Candidates before Pruning: ", len(candidates))
         if self.pruning and dimension > 2:
             self.prune(candidates, previous_dense_units)
-            print("Number of Candidates after Pruning: ", len(candidates))
 
         subspaces = np.zeros(len(candidates))
         for datapoint in self.data:
@@ -206,14 +198,13 @@ class Clique:
         cluster_list = self.clusters_subspaces[subspace_key]
 
         for cluster_index, cluster_points in enumerate(cluster_list):
-            labels[cluster_points] = cluster_index;
+            labels[cluster_points] = cluster_index
 
         return labels
 
     # data is shifted by minimum value
     # the scanned space is increased by 1e-6 because only points in the interval [0,max_value) are considered
     def preprocess_data(self, data):
-
         for feature in range(self.numbers_of_features):
             self.data[:, feature] -= min(data[:, feature])
             max_value = max(self.data[:, feature]) + 1e-6
