@@ -22,11 +22,11 @@ def save_labels_for_subspaces(all_labels, output_file):
 
 
 if __name__ == '__main__':
-    data = get_data_from_file("segmentation data.csv")
+    data = get_data_from_file("Clustering.csv")
 
     start = time.time()
     print("Started processing")
-    clique = Clique(3, 0.3, data)
+    clique = Clique(2, 0.3, data)
     clique.process()
     print("Finished processing")
     print("Start Labeling")
