@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     start = time.time()
     print("Started processing")
-    clique = Clique(2, 0.3, data)
+    clique = Clique(3, 0.1, data)
     clique.process()
     print("Finished processing")
     print("Start Labeling")
