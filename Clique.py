@@ -2,23 +2,16 @@ import numpy as np
 
 
 class Clique:
-    # xi is the partition input parameter
+
     xi: int = 1
-
-    # tau is the density threshold value
     tau: int = 0.2
-
-    # pruning value
     pruning: bool = True
-
-    # data is the preprocessed dataset input
     data = []
 
     numbers_of_features: int = 0
     numbers_of_data_points: int = 0
 
     intervals = dict()
-
     clusters_subspaces = dict()
 
     def __init__(self, xi, tau, data, pruning=True):
