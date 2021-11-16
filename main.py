@@ -3,8 +3,8 @@ from Clique import Clique
 import time
 
 
-def get_data_from_file(file):
-    df = pd.read_csv(file)
+def get_data_from_file(file, separator=','):
+    df = pd.read_csv(file, sep=separator)
     numpy_data = df.to_numpy()
     return numpy_data
 
@@ -45,5 +45,3 @@ def main(input_file, output_file, xi, tau):
 
 if __name__ == '__main__':
     main("Clustering.csv", "output_clustering_file.txt", 3, 0.1)
-    main("wine-clustering.csv", "output_wine.txt", 3, 0.1)
-    main("segmentation data.csv", "output_seg.txt", 3, 0.1)
