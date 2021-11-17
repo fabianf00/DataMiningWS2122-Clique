@@ -20,28 +20,20 @@ class Clique:
         self.numbers_of_features = np.shape(data)[1]
         self.numbers_of_data_points = np.shape(data)[0]
         self.data = data.copy()
-        print("Data preprocessing started")
         self.__preprocess_data(data)
-        print("Data preprocessing finished")
 
     # runes clique algorithm
     def process(self):
-        print("one dimensional dense units calc started")
+        print("Starting Calculation of one dimensional clusters")
         dense_units = self.__find_one_dimensional_dense_units()
-        print("one dimensional dense units calc finished")
-        print(len(dense_units), " dense units found")
-        print("one dimensional cluster calc started")
         self.clusters_of_all_subspaces.update(self.__find_all_clusters(dense_units))
-        print("one dimensional cluster calc finished")
+        print("Finished calculating one dimensional clusters")
         dimension = 2
         while dimension <= self.numbers_of_features and len(dense_units) > 0:
-            print(dimension, "dimensional dense units calc started")
+            print("Starting Calculation of", dimension, " dimensional clusters")
             dense_units = self.__find_n_dimensional_dense_units(dense_units, dimension)
-            print(dimension, "dimensional dense units calc finished")
-            print(len(dense_units), " dense units found")
-            print(dimension, "dimensional cluster calc started")
             self.clusters_of_all_subspaces.update(self.__find_all_clusters(dense_units))
-            print(dimension, "dimensional cluster calc finished")
+            print("Finished calculating", dimension, "dimensional clusters")
             dimension += 1
 
     def __get_unit_ID(self, feature, element):
@@ -85,12 +77,9 @@ class Clique:
 
     def __find_n_dimensional_dense_units(self, previous_dense_units, dimension):
         candidates = self.__join_dense_units(previous_dense_units, dimension)
-        print("finished joining")
         dense_units = []
-        print(len(candidates))
         if self.pruning and dimension > 2:
             self.__prune(candidates, previous_dense_units)
-            print(len(candidates))
 
         subspaces = np.zeros(len(candidates))
         for datapoint in self.data:
@@ -143,7 +132,7 @@ class Clique:
             dense_units_clusters_in_subspace = self.__find_clusters_in_subspace(dense_units_in_subspace)
             points_clusters_in_subspace = self.__get_clusters_with_point_ids(dense_units_clusters_in_subspace)
             clusters_by_subspaces.update({subspace: points_clusters_in_subspace})
-        print("Number of clusters: ", len(clusters_by_subspaces))
+
         return clusters_by_subspaces
 
     def __find_clusters_in_subspace(self, dense_units):
