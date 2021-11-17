@@ -57,18 +57,10 @@ def runOurClique(_data, _xi, _tau, _input_file, _output_file):
     end = time.time()
     print(end - start, "seconds for execution")
 
-    save_labels_for_subspaces(labels_for_subspace, _output_file, _input_file, _xi, _tau,end - start,1,1)
+    save_labels_for_subspaces(labels_for_subspace, _output_file, _input_file, _xi, _tau, end - start, 1, 1)
 
 
-df = pd.read_csv("data.csv", sep=',')
-df = df.drop(columns=["Unnamed: 0"])
-print(df, "\n")
-df = df.iloc[0:100, 0:10]
-gene_data = df.to_numpy()
-
-runOurClique(gene_data, 3, 0.1, "data.csv", "testing.txt")
-
-if False:
+if __name__ == "__main__":
     if len(sys.argv) > 7:
         input_file = sys.argv[1]
         start_range = int(sys.argv[2])
@@ -80,7 +72,6 @@ if False:
         output_file = sys.argv[8]
     else:
         input_file = "RNAseq_801x25.csv"
-        input_file = "data.csv"
         start_range = 0
         end_range = 10
         label_file = "labels.csv"
