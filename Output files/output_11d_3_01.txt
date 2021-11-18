@@ -1,7 +1,7 @@
 Data from: RNAseq_801x25.csv
 xi: 3
 tau: 0.1
-execution time: 20.217856884002686 s 
+execution time: 29.042224884033203 s 
 Maximum nmi_score: 0.7484510307129149
 Average nmi_score: 0.3765346832923375
 

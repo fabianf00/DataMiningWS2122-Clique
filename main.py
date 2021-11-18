@@ -4,6 +4,7 @@ import time
 import sys
 from sklearn.metrics import normalized_mutual_info_score
 import numpy as np
+import pickle
 
 def save_labels_for_subspaces(all_labels, output_file, input_file, xi, tau, execution_time, max_nmi_score,
                               avg_nmi_score):
@@ -35,9 +36,16 @@ if __name__ == "__main__":
     end_range = 10
     label_file = "labels.csv"
     xi = 3
-    tau = 0.1
+    tau = 0.02
     sep = " "
-    output_file = "Output files/output_10d_3_01.txt"
+    output_file = "Output files/output" + str(end_range)+"d_"+ str(xi)+ "_" + "".join(str(tau).split(".")) + ".txt"
+    labels_dict_file = "saved_labels_dict/labels"+ str(end_range)+"d_"+ str(xi)+ "_" + "".join(str(tau).split(".")) + ".txt"
+
+    if len(sys.argv) > 4:
+        end_range = int(sys.argv[1])
+        tau = float(sys.argv[2])
+        output_file = "Output files/" + sys.argv[3]
+        labels_dict_file = "saved_labels_dict/" + sys.argv[4]
 
     df = pd.read_csv(input_file, sep=' ', header=None)
 
@@ -69,3 +77,7 @@ if __name__ == "__main__":
 
     save_labels_for_subspaces(labels_for_subspace, output_file, input_file, xi, tau, end - start, max(score),
                               sum(score) / len(score))
+    serialized_data = pickle.dumps(labels_for_subspace)
+
+    with open(labels_dict_file, "wb") as file:
+        file.write(serialized_data)
