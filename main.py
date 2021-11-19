@@ -68,7 +68,7 @@ if __name__ == "__main__":
         xi = int(sys.argv[2])
         tau = float(sys.argv[3])
 
-    output_file = "Output files/output_" + str(number_of_dimensions) + "d_" + str(xi) + "_" + "".join(
+    output_file = "output_files/output_" + str(number_of_dimensions) + "d_" + str(xi) + "_" + "".join(
         str(tau).split(".")) + ".txt"
     labels_dict_file = "saved_labels_dict/labels_" + str(number_of_dimensions) + "d_" + str(xi) + "_" + "".join(
         str(tau).split(".")) + ".txt"
