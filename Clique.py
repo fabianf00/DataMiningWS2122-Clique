@@ -206,7 +206,6 @@ class Clique:
     def get_all_labels(self):
         labels = dict()
         for key in self.clusters_of_all_subspaces.keys():
-            print(key)
             labels.update({key: self.get_labels_for_subspace(key)})
         return labels
 
