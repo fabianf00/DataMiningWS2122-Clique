@@ -22,11 +22,14 @@ class Clique:
         self.data = data.copy()
         self.__preprocess_data(data)
 
-    #def __del__(self):
-     #   del self.clusters_of_all_subspaces
-      #  del self.intervals
-       # del self.data
-
+    def __del__(self):
+        self.intervals.clear()
+        for subspace, clusters in self.clusters_of_all_subspaces.items():
+            for cluster in clusters:
+                cluster.clear()
+            clusters.clear()
+        self.clusters_of_all_subspaces.clear()
+        self.data.clear()
     # runes clique algorithm
     def process(self):
         print("Starting Calculation of one dimensional clusters")
