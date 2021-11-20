@@ -22,6 +22,13 @@ class Clique:
         self.data = data.copy()
         self.__preprocess_data(data)
 
+    def __del__(self):
+        self.intervals = dict()
+        self.clusters_of_all_subspaces = dict()
+        self.data = []
+        self.numbers_of_features: int = 0
+        self.numbers_of_data_points: int = 0
+
     # runes clique algorithm
     def process(self):
         print("Starting Calculation of one dimensional clusters")
@@ -199,6 +206,7 @@ class Clique:
     def get_all_labels(self):
         labels = dict()
         for key in self.clusters_of_all_subspaces.keys():
+            print(key)
             labels.update({key: self.get_labels_for_subspace(key)})
         return labels
 
@@ -207,6 +215,7 @@ class Clique:
         subspace_key = frozenset(subspace)
         labels = np.full(self.numbers_of_data_points, -1)  # label of -1 is a noise point
         cluster_list = self.clusters_of_all_subspaces[subspace_key]
+        print("Number of Datapoints ",self.numbers_of_data_points)
 
         for cluster_index, cluster_points in enumerate(cluster_list):
             labels[cluster_points] = cluster_index
