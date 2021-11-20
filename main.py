@@ -42,7 +42,7 @@ def evaluate_clustering_performance(labels_for_all_subspace, true_labels):
     max_subspace = []
     for subspace, labels in labels_for_all_subspace.items():
         score.append(normalized_mutual_info_score(labels, true_labels))
-        print(list(subspace), " nmi score:", normalized_mutual_info_score(labels, labels), "Number of found "
+        print(list(subspace), " nmi score:", normalized_mutual_info_score(labels, true_labels), "Number of found "
                                                                                            "Clusters: ",
               max(labels) + 1)
         print("number of noise points:", np.count_nonzero(labels == -1))
@@ -88,8 +88,10 @@ if __name__ == "__main__":
         print("Running Clique with xi =", xi, "tau =", tau)
         clique = Clique(xi, tau, data)
         clique.process()
+        #clique.get_all_clusters()[frozenset([8])]
+        #print(clique.get_all_clusters()[frozenset([8])])
         labels_for_subspace = clique.get_all_labels()
-
+        del clique
         end = time.time()
         print(end - start, "seconds for execution")
 
