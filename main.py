@@ -88,8 +88,6 @@ if __name__ == "__main__":
         print("Running Clique with xi =", xi, "tau =", tau)
         clique = Clique(xi, tau, data)
         clique.process()
-        #clique.get_all_clusters()[frozenset([8])]
-        #print(clique.get_all_clusters()[frozenset([8])])
         labels_for_subspace = clique.get_all_labels()
         del clique
         end = time.time()
