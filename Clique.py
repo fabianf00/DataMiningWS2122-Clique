@@ -215,8 +215,6 @@ class Clique:
         subspace_key = frozenset(subspace)
         labels = np.full(self.numbers_of_data_points, -1)  # label of -1 is a noise point
         cluster_list = self.clusters_of_all_subspaces[subspace_key]
-        print(cluster_list)
-        print("Number of Datapoints ",self.numbers_of_data_points)
 
         for cluster_index, cluster_points in enumerate(cluster_list):
             labels[cluster_points] = cluster_index
