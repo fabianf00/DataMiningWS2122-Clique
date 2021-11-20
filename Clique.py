@@ -101,7 +101,7 @@ class Clique:
         candidates = []
 
         for i in range(len(previous_dense_units)):
-            for j in range(i+1, len(previous_dense_units)):
+            for j in range(i + 1, len(previous_dense_units)):
                 joined_dense_unit = previous_dense_units[i].copy()
                 joined_dense_unit.update(previous_dense_units[j])
                 if len(joined_dense_unit.keys()) == dimension and joined_dense_unit not in candidates:
@@ -215,6 +215,7 @@ class Clique:
         cluster_list = self.clusters_of_all_subspaces[subspace_key]
         print(cluster_list)
         for cluster_index, cluster_points in enumerate(cluster_list):
-           # if cluster_points < self.numbers_of_data_points:
+            if cluster_points >= self.numbers_of_data_points:
+                break
             labels[cluster_points] = cluster_index
         return labels
