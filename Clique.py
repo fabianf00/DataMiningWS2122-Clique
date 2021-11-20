@@ -29,7 +29,6 @@ class Clique:
                 cluster.clear()
             clusters.clear()
         self.clusters_of_all_subspaces.clear()
-        self.data.clear()
     # runes clique algorithm
     def process(self):
         print("Starting Calculation of one dimensional clusters")
