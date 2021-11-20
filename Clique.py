@@ -23,11 +23,9 @@ class Clique:
         self.__preprocess_data(data)
 
     def __del__(self):
-        self.intervals = dict()
-        self.clusters_of_all_subspaces = dict()
-        self.data = []
-        self.numbers_of_features: int = 0
-        self.numbers_of_data_points: int = 0
+        del self.clusters_of_all_subspaces
+        del self.intervals
+        del self.data
 
     # runes clique algorithm
     def process(self):
@@ -217,6 +215,6 @@ class Clique:
         cluster_list = self.clusters_of_all_subspaces[subspace_key]
         print(cluster_list)
         for cluster_index, cluster_points in enumerate(cluster_list):
+           # if cluster_points < self.numbers_of_data_points:
             labels[cluster_points] = cluster_index
-
         return labels
